@@ -1,8 +1,7 @@
 (defpackage #:filesystem-util
   (:use :cl
 	:utility)
-  (:export save myload save2 myload2 rebase-path)
-  (:export this-file this-directory))
+  (:export save myload save2 myload2))
 (in-package #:filesystem-util)
 
 (defun save (path things)
@@ -24,25 +23,3 @@
   (save (merge-pathnames (format nil "~s" thingfilename) path) things))
 (defun myload2 (path thingfilename)
   (myload (merge-pathnames (format nil "~s" thingfilename) path)))
-
-(defun rebase-path (path base)
-  (let ((newpath (merge-pathnames path base)))
-    (cond ((or (uiop:pathname-equal newpath base) 
-	       (not (uiop:subpathp newpath base)))
-	   (error "not a subpath
-~a
-~a" path newpath))
-	  (t
-	   newpath))))
-
-(defmacro this-file ()
-  `(etouq (or *compile-file-truename*
-	      *load-truename*)))
-
-(eval-always
-  (defun file-directory (value)
-    (make-pathname :host (pathname-host value)
-		   :directory (pathname-directory value))))
-
-(defmacro this-directory ()
-  `(etouq (file-directory (this-file))))
